@@ -10,8 +10,6 @@ import urllib.request
 from tqdm import tqdm
 from collections import defaultdict
 
-
-
 # --------------------------------------------- Data Prep Utils ----------------------------------------------------
 
 def download_nq_train_data():
@@ -87,6 +85,24 @@ def load_pkl_file(filepath):
         data = pickle.load(f)
 
     return data
+
+
+def create_pkl_file(obj, filepath):
+    '''
+    Dumps an object from memory to disk
+
+    Args:
+        obj - object to pickle
+        filepath (str) - location to save object
+
+    '''
+
+    with open(filepath, 'wb') as f:
+        pickle.dump(obj, f)
+
+    logging.info('Successfully pickled object')
+
+    return
 
 
 def filter_nq_train_data(raw_data, retriever_eval_only=True):
@@ -350,7 +366,7 @@ def compile_qa_records(extracted_data):
         slim_data.append(new_rec)
         
     return slim_data
-
+    
 
 # --------------------------------------------- Pipelines ----------------------------------------------------
 
@@ -363,6 +379,9 @@ def prep_data_pipeline(retriever_eval_only=True):
         2. Filters the examples to only those relevant to retriever evaluation (has short_answer, resolves multiple answers)
         3. Cleans, parses, and extracts relevant data fields 
         4. Saves the prepared data to a local directory
+
+    Args:
+        retriever_eval_only (bool) - if False, pipeline includes short answer AND no answer
 
     '''
 
@@ -377,22 +396,18 @@ def prep_data_pipeline(retriever_eval_only=True):
     # create data directory in parent folder
     os.makedirs('../data/stage_data', exist_ok=True)
 
+    # save data 
+    ext = "" if not retriever_eval_only else "_fullsys"
+    outfile = f'../data/stage_data/extracted_clean_data{ext}.pkl' ## TO-DO: Make this implicit!   
 
-    if retriever_eval_only:
-        outfile = '../data/stage_data/extracted_clean_data.pkl' ## TO-DO: Make this implicit!   
-    else:
-        outfile = '../data/stage_data/extracted_clean_data_fullsys.pkl' ## TO-DO: Make this implicit!   
-
-    with open(outfile, 'wb') as f:  ## TO-DO: Make this implicit!
-        pickle.dump(data, f)
-
+    create_pkl_file(data, outfile)
 
     logging.info('Data Preparation Pipeline Finished')
 
     return
 
 
-def compile_data_pipeline(retriever_eval_only=True):
+def compile_data_pipeline(retriever_eval_only=True, chunk_method=None):
     '''
     Data Compilation Utility Pipeline
 
@@ -402,12 +417,19 @@ def compile_data_pipeline(retriever_eval_only=True):
         3. Creates q/a records to be used for evaluation
         4. Saves those data artifacts to eval_data directory
 
+    Args:
+        retriever_eval_only (bool) - if False, pipeline includes short answer AND no answer
+
     '''
 
     logging.info('Data Compilation Pipeline Started')
 
+    # set data path
+    ext = "" if not retriever_eval_only else "_fullsys"
+    infile = f'../data/stage_data/extracted_clean_data{ext}.pkl' ## TO-DO: Make this implicit!   
+
     # run pipeline
-    data = load_pkl_file(filepath='../data/stage_data/extracted_clean_data.pkl') ## TO-DO: Make this implicit!
+    data = load_pkl_file(filepath=infile) ## TO-DO: Make this implicit!
     evidence_corpus = compile_evidence_corpus(data)
     # TO-DO: insert function here for different chunking methods
     qa_records = compile_qa_records(data)
@@ -415,11 +437,13 @@ def compile_data_pipeline(retriever_eval_only=True):
     # create data directory in parent folder
     os.makedirs('../data/eval_data', exist_ok=True)
 
-    with open('../data/eval_data/evidence_corpus.pkl', 'wb') as f:
-        pickle.dump(evidence_corpus, f)
+    # save evidence corpus
+    outfile_ec = f'../data/eval_data/evidence_corpus{ext}.pkl'
+    create_pkl_file(evidence_corpus, outfile_ec)
 
-    with open('../data/eval_data/qa_records.pkl', 'wb') as f:
-        pickle.dump(qa_records, f)
+    # save evidence corpus
+    outfile_rec = f'../data/eval_data/qa_records{ext}.pkl'
+    create_pkl_file(qa_records, outfile_rec)
 
     logging.info('Data Compilation Pipeline Finished')
 
