@@ -54,7 +54,7 @@ To activate the newly created Anaconda environment, run:
 
 ```shell
 # Activate the virtual environment
-$ conda activate 
+$ conda activate qa-retriever-eval
 ```
 
 
@@ -67,4 +67,4 @@ To streamline project setup, a script has been created to process the NQ train d
 $ python3 prepare_data.py -R 0
 ```
 
-After successfully running this script, access the `Example_Notebook.ipynb` for interacting with ElasticSearch
+After successfully running this script, access the `Example_Notebook.ipynb` for interacting with ElasticSearch + BERT.
