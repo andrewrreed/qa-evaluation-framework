@@ -125,5 +125,7 @@ dmypy.json
 .pyre/
 
 # custom
-data/*
+data/stage_data
+data/eval_data
+data/raw_data/*
 .DS_Store
