@@ -32,7 +32,7 @@ if not os.path.exists('data/raw_data/v1.0-simplified_simplified-nq-train.jsonl')
 
 # ---------------------------------------------- Data Prep ----------------------------------------------
 # instantiate routines
-raw_data_path = 'data/raw_data/TESTING_v1.0-simplified_simplified-nq-train.jsonl'
+raw_data_path = 'data/raw_data/v1.0-simplified_simplified-nq-train.jsonl'
 dpr = DataPreprocessingRoutine(raw_data_path=raw_data_path,
                                retriever_eval_only=retriever_eval_only)
 
