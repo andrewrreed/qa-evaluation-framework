@@ -29,7 +29,7 @@ $ brew tap elastic/tap
 $ brew install elastic/tap/elasticsearch-full
 
 # launch
-$ /usr/local/var/homebrew/linked/elasticsearch-full/bin
+$ elasticsearch
 ```
 
 
