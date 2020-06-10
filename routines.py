@@ -160,27 +160,33 @@ class DataPreprocessingRoutine:
         
         for i, rec in enumerate(tqdm(self.data)):
             
-            example_id = rec['example_id']
-            document_url = rec['document_url']
-            question_text = rec['question_text']
-            short_answer = self.get_short_answer_from_span(rec)
-            document_text_clean = self.clean_document_text(rec['document_text'])
-            document_title = self.extract_wiki_title(rec['document_url'])
-            
-            # to ensure our dataset is completely solveable this logic weeds out erroneous labels
-            # ex. 'Mickey Hart </Li> <Li> Bill Kreutzmann </Li> <Li> John Mayer </Li> was selected as long AND short answer
-            # when really each of these should have been their own short answers
-            if short_answer not in document_text_clean:
+            try:
+                example_id = rec['example_id']
+                document_url = rec['document_url']
+                question_text = rec['question_text']
+                short_answer = self.get_short_answer_from_span(rec)
+                document_text_clean = self.clean_document_text(rec['document_text'])
+                document_title = self.extract_wiki_title(rec['document_url'])
+                
+                # to ensure our dataset is completely solveable this logic weeds out erroneous labels
+                # ex. 'Mickey Hart </Li> <Li> Bill Kreutzmann </Li> <Li> John Mayer </Li> was selected as long AND short answer
+                # when really each of these should have been their own short answers
+                if short_answer not in document_text_clean:
+                    continue
+                
+                new_rec = {'example_id': example_id,
+                        'document_title': document_title,
+                        'document_url': document_url,
+                        'question_text': question_text,
+                        'short_answer': short_answer,
+                        'document_text_clean': document_text_clean}
+                
+                extracted_data.append(new_rec)
+
+            except Exception as e:
+                logging.info(str(e))
                 continue
-            
-            new_rec = {'example_id': example_id,
-                    'document_title': document_title,
-                    'document_url': document_url,
-                    'question_text': question_text,
-                    'short_answer': short_answer,
-                    'document_text_clean': document_text_clean}
-            
-            extracted_data.append(new_rec)
+
             
         logging.info(f'{len(extracted_data)} of the {len(self.data)} records are complete and solvable.')
         
