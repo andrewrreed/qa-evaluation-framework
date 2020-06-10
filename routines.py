@@ -45,20 +45,22 @@ class DataPreprocessingRoutine:
         ext = "" if self.mode else "_fullsys"
         outfile = module_path+f'/data/stage_data/extracted_clean_data{ext}.pkl' ## TO-DO: Make this implicit!   
         
-        if os.path.exists(outfile):
-            raise Exception('This file has already been created. Please delete it if you wish to recreate.:', outfile)
+        if not os.path.exists(outfile):
             
-        # run pipeline
-        self.load_data()
-        self.filter_nq_train_data()
-        self.extract_data()
-        self.drop_longer_answers()
+            # run pipeline
+            self.load_data()
+            self.filter_nq_train_data()
+            self.extract_data()
+            self.drop_longer_answers()
 
-        # save data 
-        os.makedirs(module_path+'/data/stage_data', exist_ok=True)
-        self.save_data(outfile)
+            # save data 
+            os.makedirs(module_path+'/data/stage_data', exist_ok=True)
+            self.save_data(outfile)
 
-        logging.info('Data Processing Routine Finished')
+            logging.info('Data Processing Routine Finished')
+        
+        else:
+            logging.info('This file has already been created. Skipping DataPreprocessing and using existing file.')
 
         return
 
