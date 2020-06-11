@@ -20,7 +20,7 @@ parser.add_argument('-R', '--retriever-eval-only', help='1 if running pipeline f
 args = parser.parse_args()
 
 if not args.retriever_eval_only:
-    raise Exception('Must specifify -RO argument (of 1 or 0) indicating running pipeline for retriever-only or for full system.')
+    raise Exception('Must specifify -R argument (of 1 or 0) indicating running pipeline for retriever-only or for full system.')
 else:
     retriever_eval_only = bool(int(args.retriever_eval_only))
 
@@ -49,7 +49,8 @@ dcr.run()
 es = connect_es()
 
 # create an index
-index_name = 'demo_index'
+ext = "" if retriever_eval_only else "_fullsys"
+index_name = f'demo_index{ext}'
 settings = {
         "mappings": {
             "dynamic": "strict",        
@@ -64,7 +65,6 @@ settings = {
 create_es_index(es_obj=es, settings=settings, index_name=index_name)
 
 # load NQ articles into index
-ext = "" if retriever_eval_only else "_fullsys"
 ec_filepath = module_path+f'/data/eval_data/evidence_corpus{ext}.pkl'
 evidence_corpus = load_pkl_file(ec_filepath)
 
