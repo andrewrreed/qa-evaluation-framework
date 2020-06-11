@@ -21,13 +21,13 @@ class DataPreprocessingRoutine:
     Data Preparation Routine
 
     This class holds utilities that execute a data processing routine that:
-        1. Downloads Natural Questions simplified training dataset (if not already downloaded)
+        1. Loads Natural Questions simplified training dataset from local directory
         2. Filters the examples to only those relevant to retriever evaluation (has short_answer, resolves multiple answers)
         3. Cleans, parses, and extracts relevant data fields 
         4. Saves the prepared data to a local directory
 
     Args:
-        retriever_eval_only (bool) - if False, pipeline includes short answer AND no answer
+        retriever_eval_only (bool) - indicates if the pipeline incluedes short answer AND no answer (False) or short answer only (True)
         raw_data_path (str) - path to unzipped simplified nq jsonl file
 
     '''
@@ -318,7 +318,7 @@ class DataCompilationRoutine:
         4. Saves those data artifacts to eval_data directory
 
     Args:
-        retriever_eval_only (bool) - if False, pipeline includes short answer AND no answer
+        retriever_eval_only (bool) - indicates if the pipeline incluedes short answer AND no answer (False) or short answer only (True)
 
     '''
 
