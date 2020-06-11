@@ -339,20 +339,21 @@ class DataCompilationRoutine:
         outfile_ec = module_path+f'/data/eval_data/evidence_corpus{ext}.pkl'
         outfile_rec = module_path+f'/data/eval_data/qa_records{ext}.pkl'
 
-
-        if os.path.exists(outfile_ec) or os.path.exists(outfile_ec):
-            raise Exception('These files have already been created. Please delete both to re-run.')
+        if not os.path.exists(outfile_ec) or not os.path.exists(outfile_ec):
         
-        self.load_data()
-        self.compile_evidence_corpus()
-        self.compile_qa_records()
+            self.load_data()
+            self.compile_evidence_corpus()
+            self.compile_qa_records()
 
-        # save data
-        os.makedirs(module_path+'/data/eval_data', exist_ok=True)
-        self.save_data(self.evidence_corpus, outfile_ec)
-        self.save_data(self.qa_records, outfile_rec)
+            # save data
+            os.makedirs(module_path+'/data/eval_data', exist_ok=True)
+            self.save_data(self.evidence_corpus, outfile_ec)
+            self.save_data(self.qa_records, outfile_rec)
 
-        logging.info('Data Compilation Routine Finished')
+            logging.info('Data Compilation Routine Finished')
+        
+        else:
+            logging.info('Stage data files have already been created, skipping compilation.')
 
 
     def load_data(self):
